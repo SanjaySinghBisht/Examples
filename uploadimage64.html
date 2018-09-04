@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <title>Get File Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 15px;
+        }
+
+        .file-details {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #d8e2e7;
+
+        }
+
+        .file-details thead th {
+            background: #f6f8fa;
+            color: #fff;
+            text-align: left;
+            color: #6c7a86;
+        }
+
+        .file-details td,
+        .file-details th {
+            padding: 10px 15px;
+            border-bottom: 1px solid #d8e2e7;
+        }
+
+        #file {
+            outline: none;
+            opacity: 0;
+            position: absolute;
+            z-index: 1;
+            left: 9px;
+            width: 145px;
+            height: 32px;
+            top: 7px;
+        }
+
+        .browse-label {
+            padding: 10px 50px;
+            background: rgb(30, 113, 207);
+            color: #fff;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .image {
+            text-align: center
+        }
+
+        .image img {
+            cursor: pointer;
+        }
+
+        @media(max-width: 767px) {
+            .file-details {
+                border: none;
+            }
+            .file-details thead {
+                display: none;
+            }
+            .file-details tbody td {
+                display: block;
+                background: #e2e5e6;
+                border-bottom: none;
+            }
+            .file-details tbody tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 1px solid #999;
+            }
+            .file-details td:before {
+                content: attr(data-title);
+
+            }
+        }
+    </style>
+</head>
+
+<body style="font:15px Calibri;">
+    <!--ADD INPUT OF TYPE FILE WITH THE MULTIPLE OPTION-->
+    <p>
+        <lable class="browse-label">Browse</lable>
+        <input type="file" id="file" multiple />
+    </p>
+
+    <!--SHOW RESULT HERE-->
+    <table class="file-details" cellspacing="0" cellpadding="0" border="0">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Reimbursement Type</th>
+                <th> Date</th>
+                <th>Amonut</th>
+                <th> Action</th>
+            </tr>
+        </thead>
+        <tbody class="rows"> </tbody>
+        <tfoot></tfoot>
+    </table>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script>
+    var rowsData = "";
+    function deleteRow(e) {
+        $(e).parents("tr").remove();
+    }
+    function convertToBase64(file, fname, i) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            rowsData = "";
+            rowsData += '<tr> <td class="image"><img  width="40" height="40" id="image' + i + '" src=" ' + reader.result + '"/><br/>' + fname + '</td> <td data-title="Reimbursement Type"><select class="form-control"><option>Option1</option></select></td>   <td data-title="Date" class="date"><input class="form-control" type="date"/></td><td data-title="Amount"><input type="text" class="form-control" placeholder="Amount"/></td><td data-title="Action"><input type="button" value="Delete" class="deleteRow btn btn-danger" onclick="deleteRow(this)" id="deleteRow' + i + '"/></td> </tr>';
+            $(".rows").append(rowsData);
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+    }
+    $(document).ready(function () {
+        $("#file").on("change", function () {
+            // GET THE FILE INPUT.
+            var fi = document.getElementById('file');
+            if (fi.files.length > 0) {
+                // RUN A LOOP TO CHECK EACH SELECTED FILE.
+                for (var i = 0; i <= fi.files.length - 1; i++) {
+                    var files = document.getElementById('file').files;
+                    var fname = fi.files.item(i).name;      // THE NAME OF THE FILE.
+                    var fsize = fi.files.item(i).size;      // THE SIZE OF THE FILE.
+                    // if (fi.files.item(i).name.split(".")[1].toUpperCase() != "JPG"){
+                    //     alert("Please select PNG ,JPG ,PDF files only")
+                    //     return false;
+                    // } 
+                    // if(fsize >=2050000)
+                    // {
+                    //     alert("Please select Image below 2MB size");
+                    //     return false;
+                    // }
+                    // Call the function for conversion of image to base64
+                    convertToBase64(files[i], fname, i);
+
+                }
+            }
+        });
+
+    });
+
+</script>
+
+</html>
